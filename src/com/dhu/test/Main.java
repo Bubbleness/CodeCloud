@@ -1,36 +1,84 @@
 package com.dhu.test;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        int[] arr = {1,1,1,2,2,3,3,4,5,6,6};
-        int n = removeDuplicate(arr);
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int k = sc.nextInt();
+        ArrayList<Point> list = new ArrayList<>();
         for(int i=0;i<n;i++){
-            System.out.print(arr[i] + " ");
+            int x = sc.nextInt();
+            int y = sc.nextInt();
+            Point p = new Point(x,y);
+            list.add(p);
         }
-        System.out.println();
-        System.out.println(n);
+
+        Collections.sort(list, new Comparator<Point>() {
+            @Override
+            public int compare(Point o1, Point o2) {
+                if(o1.x != o2.x)
+                    return o1.x - o2.x;
+                else
+                    return o1.y - o2.y;
+            }
+        });
+
+
+        int ans = getCnt(list,k);
+        System.out.println(ans);
+
+
     }
 
-    public static int removeDuplicate(int[] nums){
+    // 计算切比雪夫距离
+    public static int getInstance(Point a , Point b){
 
-//        int i;
-//        int j = 1;
-//        for(i=1;i<n;i++){
-//            if(nums[i] != nums[j-1])
-//                nums[j++] = nums[i];
-//        }
-//        return i;
-        int n = nums.length;
-        if(n == 0 || n == 1)
-            return n;
-        int count = 1;
-        for(int i=0;i<n-1;i++){
-            if (nums[i]  != nums[i+1])
-                nums[count++] = nums[i+1];
+        int absA = Math.abs(a.x - b.x);
+        int absB = Math.abs(a.y - b.y);
+        return Math.max(absA,absB);
+    }
+
+    public static int getCnt(ArrayList<Point> list , int k){
+        if(list.size() == 0)
+            return 0;
+
+        int cnt = 0;
+        for(int i=0;i<list.size();i++){
+            Point temp = list.get(i);
+            int temp_x = temp.x;
+            int temp_y = temp.y;
+            for(int j=i+1;j<list.size();j++){
+                Point temp2 = list.get(j);
+                if(temp2.x > temp_x+k && temp2.y > temp_y+k)
+                    break;
+
+                if(getInstance(temp,temp2) == k){
+                    cnt++;
+                }
+            }
         }
-        return count;
+
+        return cnt;
+    }
+
+
+}
+
+class Point{
+    int x;
+    int y;
+
+    public Point() {
+    }
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }
